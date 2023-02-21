@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -30,7 +31,23 @@ func execInput(input string) error {
 	// Removes newline
 	input = strings.TrimSuffix(input, "\n")
 
-	cmd := exec.Command(input)
+	args := strings.Split(input, " ")
+
+	switch args[0] {
+	case "exit":
+		os.Exit(0)
+	case "cd":
+		if len(args) < 2 {
+			return errors.New("path required")
+		}
+		return os.Chdir(args[1])
+	}
+
+	// Fix for Windows?
+	// need to add /c somewhere I think
+	cmd := exec.Command("cmd.exe", args...)
+
+	//cmd := exec.Command(args[0], args[1:]...)
 
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
