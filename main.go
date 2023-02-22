@@ -7,9 +7,27 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 )
 
 func main() {
+	terminal := tview.NewApplication()
+	//text := tview.NewInputField().SetLabel("> ").SetLabelColor(tcell.ColorDarkGreen)
+	background := tview.NewBox().SetBackgroundColor(tcell.ColorBlack).SetBorder(true).SetTitle("ShellGo").SetTitleColor(tcell.ColorDarkGreen)
+
+	if err := terminal.SetRoot(background, true).EnableMouse(true).Run(); err != nil {
+		panic(err)
+	}
+
+	terminal.SetInputCapture(func(input *tcell.EventKey) *tcell.EventKey {
+		if input.Rune() == 113 {
+			terminal.Stop()
+		}
+		return input
+	})
+
 	cmdReader := bufio.NewReader(os.Stdin)
 
 	for {
